@@ -1,4 +1,5 @@
-.idea/
-exams/
-xml/
 *.pyc
+.idea/
+exams/*.docx
+xml/*.xml
+xml_db.xml
