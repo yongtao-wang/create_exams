@@ -31,11 +31,7 @@ def find_all_files(path):
 def get_file_name(path):
     last_slash = path.rfind('/')
     last_dot = path.rfind('.')
-    return unicodify(path[last_slash + 1:last_dot])
-
-
-def unicodify(unicode_string, encoding='utf-8'):
-    return unicode(unicode_string, encoding)
+    return unicode(path[last_slash + 1:last_dot], encoding='utf-8')
 
 
 def extract_from_docx(docx_path):
@@ -63,7 +59,7 @@ def extract_from_docx(docx_path):
 
             j = i + 1
             # an option starts with a letter, possibly followed by a delimiter
-            regex_option = unicodify('^(\s)*[A-Za-z]+(\s|[.]|[、]|[。]|[，])*')
+            regex_option = u'^(\s)*[A-Za-z]+(\s|[.]|[、]|[。]|[，])*'
             ascii_A = 65
             while j < len(doc.paragraphs):
                 text = doc.paragraphs[j].text.strip()
@@ -148,11 +144,11 @@ def create_exam(xml, single_choice=None, multi_choice=None, blanks=None, yes_no=
     font = style.font
     font.name = 'Source Han Sans CN'
 
-    document.add_heading(unicodify('金融测试题'), 0)
-    info = document.add_paragraph(unicodify('本次测试共%s题。 ' % total_count))
+    document.add_heading(u'金融测试题', 0)
+    info = document.add_paragraph(u'本次测试共%s题。 ' % total_count)
     info.add_run('@%s' % datetime.datetime.now().date())
 
-    answer_doc.add_heading(unicodify('答案'), 0)
+    answer_doc.add_heading(u'答案', 0)
 
     category_count = {}
 
@@ -161,7 +157,7 @@ def create_exam(xml, single_choice=None, multi_choice=None, blanks=None, yes_no=
         for node in root.findall('.//question[@type="%s"]' % QuestionType.s_choice):
             list_choice.append(node)
         list_selected = random.sample(list_choice, single_choice)
-        document.add_paragraph(unicodify('单项选择题'), style='Heading 1')
+        document.add_paragraph(u'单项选择题', style='Heading 1')
         for q in list_selected:
             add_to_category(category_dictionary=category_count, node=q)
             document.add_paragraph(q.text, style='List Number 2')
@@ -174,7 +170,7 @@ def create_exam(xml, single_choice=None, multi_choice=None, blanks=None, yes_no=
         for node in root.findall('.//question[@type="%s"]' % QuestionType.m_choice):
             list_choice.append(node)
         list_selected = random.sample(list_choice, multi_choice)
-        document.add_paragraph(unicodify('多项选择题'), style='Heading 1')
+        document.add_paragraph(u'多项选择题', style='Heading 1')
         for q in list_selected:
             add_to_category(category_dictionary=category_count, node=q)
             document.add_paragraph(q.text, style='List Number 2')
@@ -187,7 +183,7 @@ def create_exam(xml, single_choice=None, multi_choice=None, blanks=None, yes_no=
         for node in root.findall('.//question[@type="%s"]' % QuestionType.blank):
             list_blanks.append(node)
         list_selected = random.sample(list_blanks, blanks)
-        document.add_paragraph(unicodify('填空题'), style='Heading 1')
+        document.add_paragraph(u'填空题', style='Heading 1')
         for q in list_selected:
             add_to_category(category_dictionary=category_count, node=q)
             document.add_paragraph(q.text, style='List Number 2')
@@ -198,13 +194,13 @@ def create_exam(xml, single_choice=None, multi_choice=None, blanks=None, yes_no=
         for node in root.findall('.//question[@type="%s"]' % QuestionType.yes_no):
             list_yn.append(node)
         list_selected = random.sample(list_yn, yes_no)
-        document.add_paragraph(unicodify('判断题'), style='Heading 1')
+        document.add_paragraph(u'判断题', style='Heading 1')
         for q in list_selected:
             add_to_category(category_dictionary=category_count, node=q)
             document.add_paragraph(q.text, style='List Number 2')
             answer_doc.add_paragraph('%s -- %s' % (q.get('answer'), q.get('category')), style='List Number')
 
-    answer_doc.add_paragraph(unicodify('题型统计'), style='Heading 3')
+    answer_doc.add_paragraph(u'题型统计', style='Heading 3')
     for key, value in category_count.items():
         answer_doc.add_paragraph(u'%s: %s题' % (key, value))
 
